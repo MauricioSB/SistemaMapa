@@ -24,20 +24,20 @@ public class MarcadorDAO extends AbstractDAO<Marcador>{
     
     
     @Override
-    protected void update(Marcador mcr){
+    public void update(Marcador mcr){
         super.update(mcr);
     }
         
     @Override
-    protected void delete(Marcador mcr){
+    public void delete(Marcador mcr){
         super.delete(mcr);
     }
     
-    protected Marcador find(int id){
+    public Marcador find(int id){
         return super.find(Marcador.class, id);
     }
     
-    protected List<Marcador> findAll(){
+    public List<Marcador> findAll(){
         return super.findAll(Marcador.class);
     }
 
