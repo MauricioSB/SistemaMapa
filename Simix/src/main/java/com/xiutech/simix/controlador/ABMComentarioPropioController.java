@@ -5,6 +5,7 @@
  */
 package com.xiutech.simix.controlador;
 
+import javax.faces.bean.ManagedBean;
 import com.xiutech.simix.modelo.Comentario;
 import com.xiutech.simix.modelo.ComentarioDAO;
 import com.xiutech.simix.modelo.ComentarioId;
@@ -16,6 +17,7 @@ import com.xiutech.simix.modelo.MarcadorDAO;
  *
  * @author MauricioSB
  */
+@ManagedBean
 public class ABMComentarioPropioController {
     
    private int id_marcador;
@@ -47,32 +49,53 @@ public class ABMComentarioPropioController {
        this.texto = texto;
    }
    
-    public void agregaComentario(){
-        ComentaristaDAO udb = new ComentaristaDAO ();
-        Comentarista cmn = udb.find("mu.andrea@ciencias.unam.mx");
+    public String agregaComentario(){
+        String error = "Ocurrio un error";
+        String mensaje = "Se agrego exitosamente";
         
-        MarcadorDAO udb_prima = new MarcadorDAO();
-        Marcador ma = udb_prima.find(1);
+        try{
+            ComentaristaDAO udb = new ComentaristaDAO ();
+            Comentarista cmn = udb.find("mu.andrea@ciencias.unam.mx");
+
+            MarcadorDAO udb_prima = new MarcadorDAO();
+            Marcador ma = udb_prima.find(1);
+
+            ComentarioId id = new ComentarioId();
+            id.setIdMarcador(ma.getIdMarcador());
+            id.setCorreoComentarista(cmn.getCorreo());
+
+            //Se crea el objeto comentario para agregarlo a la base de datos
+            Comentario u = new Comentario();
+            u.setTexto(texto);
+            u.setComentarista(cmn);
+            u.setMarcador(ma);
+
+            ComentarioDAO uu = new ComentarioDAO ();
+             //Para agregar a la base de datos.
+        uu.save(u);
+        return "MensajeExitoIH?faces-redirect=true&mensaje=" + mensaje;
         
-        ComentarioId id = new ComentarioId();
-        id.setIdMarcador(ma.getIdMarcador());
-        id.setCorreoComentarista(cmn.getCorreo());
-        
-        //Se crea el objeto comentario para agregarlo a la base de datos
-        Comentario u = new Comentario();
-        u.setTexto(texto);
-        u.setComentarista(cmn);
-        u.setMarcador(ma);    
+        }catch(Exception e){
+            
+         return "MensajeExitoIH?faces-redirect=true&mensaje="  + mensaje ;           
+        }   
     }
     
     public void eliminaComentario(){}
     
-    public void editaComentario(){
+    public String editaComentario(){
+        String error = "Ocurrio un error";
+        String mensaje = "Se modifico exitosamente";        
+        try{
         ComentarioId id = new ComentarioId(this.id_marcador, this.correo_comentarista);
         ComentarioDAO comdao = new ComentarioDAO();  
         String comModificado = this.texto;
         Comentario viejo = comdao.find(id);
         viejo.setTexto(comModificado);
         comdao.update(viejo);
+        return "MensejaExitoso?faces-redirect=true&mensaje=" + mensaje;
+        } catch (Exception e) {
+            return "MensejaExitoso?faces-redirect=true&mensaje=" + mensaje;
+        }
     }
 }
